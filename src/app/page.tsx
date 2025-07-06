@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import ParticleBackground from '@/components/oraculo/particle-background';
 import { TypingText } from '@/components/oraculo/typing-text';
 import { analisarConsulta } from '@/ai/flows/analise-consulta-flow';
+import { LoadingScreen } from '@/components/oraculo/loading-screen';
 
 const modules = [
   { id: 'cpf', icon: <User className="h-5 w-5" />, label: 'CPF' },
@@ -31,6 +32,7 @@ const welcomeMessage = `
 `;
 
 export default function OraclePage() {
+  const [isAppLoading, setIsAppLoading] = useState(true);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState('');
   const [output, setOutput] = useState(welcomeMessage);
@@ -42,6 +44,13 @@ export default function OraclePage() {
 
   const onTypingComplete = useCallback(() => {
     setIsTyping(false);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsAppLoading(false);
+    }, 4000);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -151,8 +160,12 @@ export default function OraclePage() {
     }
   };
 
+  if (isAppLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <main className="relative min-h-screen w-full bg-background font-code overflow-hidden scanlines">
+    <main className="relative min-h-svh md:min-h-screen w-full bg-background font-code overflow-hidden scanlines">
       <ParticleBackground />
       <div className="relative z-10 flex flex-col p-2 sm:p-4 gap-4 min-h-[100svh] md:flex-row pb-14">
         <nav className="flex flex-row md:flex-col gap-2 p-2 bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg md:w-64 overflow-x-auto md:overflow-y-auto">
