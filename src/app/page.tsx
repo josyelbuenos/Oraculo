@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, FormEvent } from 'react';
-import { User, Phone, Car, Building, Search, Cpu, X, Loader2 } from 'lucide-react';
+import { User, Phone, Car, Building, Search, Eye, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -79,11 +79,34 @@ export default function OraclePage() {
 
       const data = await res.json();
       
-      if (!data.resultado || data.resultado.trim().length < 5 || data.resultado.toLowerCase().includes('timeout') || data.resultado.toLowerCase().includes('inválido')) {
+      const headersToRemove = [
+        '👤 USUÁRIO:',
+        '🤖 BY:',
+        '✅ Canal:',
+        '• Total de resultados encontrados:',
+        'O RESULTADO DA SUA CONSULTA ESTA NO DOCUMENTO ✅',
+        'O RESULTADO DA SUA CONSULTA ESTÁ NO DOCUMENTO ✅',
+        '🔎 CONSULTA DE CPF DATA 🔎',
+        '🔎 CONSULTA DE NOME 🔎',
+        '🔎 CONSULTA DE CPF 🔎',
+      ];
+
+      const cleanResult = (text: string) => {
+        if (!text) return '';
+        const lines = text.split('\n');
+        const filteredLines = lines.filter(line => 
+            !headersToRemove.some(header => line.trim().toLowerCase().includes(header.trim().toLowerCase()))
+        );
+        return filteredLines.join('\n').trim();
+      }
+
+      const cleanedData = cleanResult(data.resultado);
+
+      if (!cleanedData || cleanedData.trim().length < 5 || cleanedData.toLowerCase().includes('timeout') || cleanedData.toLowerCase().includes('inválido')) {
          throw new Error('Nenhum dado encontrado ou a consulta expirou.');
       }
 
-      setOutput(data.resultado);
+      setOutput(cleanedData);
     } catch (error: any) {
       console.error(error);
       setIsError(true);
@@ -104,7 +127,7 @@ export default function OraclePage() {
       <div className="relative z-10 flex flex-col p-2 sm:p-4 gap-4 min-h-[100svh] md:h-screen md:flex-row md:overflow-hidden">
         <nav className="flex flex-row md:flex-col gap-2 p-2 bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg md:w-64 overflow-x-auto md:overflow-y-auto">
           <div className="flex items-center gap-2 p-2 border-b border-primary/20">
-            <Cpu className="text-primary text-glow-primary h-6 w-6" />
+            <Eye className="text-primary text-glow-primary h-6 w-6" />
             <h1 className="text-lg font-bold text-primary text-glow-primary">ORÁCULO</h1>
           </div>
           <div className="flex flex-row md:flex-col gap-2 p-2">
