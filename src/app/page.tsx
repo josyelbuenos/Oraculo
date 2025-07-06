@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, FormEvent } from 'react';
+import { useState, useEffect, useRef, FormEvent, useCallback } from 'react';
 import { User, Phone, Car, Building, Search, Eye, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +39,10 @@ export default function OraclePage() {
   const [isError, setIsError] = useState(false);
   const [fictionalData, setFictionalData] = useState({ crypto: 'A4B8', signal: 98, ping: 12 });
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const onTypingComplete = useCallback(() => {
+    setIsTyping(false);
+  }, []);
 
   useEffect(() => {
     if (selectedModule) {
@@ -178,7 +182,7 @@ export default function OraclePage() {
           <Card className="flex-1 flex flex-col bg-black/30 backdrop-blur-sm border-primary/20 overflow-hidden">
             <CardContent className="p-4 flex-1 overflow-y-auto">
               {isTyping ? (
-                 <TypingText text={output} isError={isError} onComplete={() => setIsTyping(false)} />
+                 <TypingText text={output} isError={isError} onComplete={onTypingComplete} />
               ) : (
                 <pre className={cn("whitespace-pre-wrap font-code text-sm", isError ? "text-destructive text-glow-error" : "text-accent text-glow-accent")}>
                   {output}
