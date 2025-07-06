@@ -8,7 +8,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import ParticleBackground from '@/components/oraculo/particle-background';
 import { TypingText } from '@/components/oraculo/typing-text';
-import { runConsulta } from '@/ai/flows/consulta-flow';
 
 const modules = [
   { id: 'cpf', icon: <User className="h-5 w-5" />, label: 'CPF' },
@@ -65,20 +64,30 @@ export default function OraclePage() {
     setIsError(false);
 
     try {
-      const response = await runConsulta({
-        module: selectedModule,
-        query: inputValue,
-      });
+      const res = await fetch(`https://oraculo-api-enso.onrender.com/consulta/${selectedModule}/${inputValue}`);
 
-      if (!response || !response.result || response.result.trim().length < 5) {
-         throw new Error('No data found');
+      if (!res.ok) {
+        let errorDetail = "Erro do servidor.";
+        try {
+            const errorJson = await res.json();
+            errorDetail = errorJson.detail || `HTTP error! status: ${res.status}`;
+        } catch (e) {
+            errorDetail = `HTTP error! status: ${res.status}`;
+        }
+        throw new Error(errorDetail);
       }
 
-      setOutput(response.result);
-    } catch (error) {
+      const data = await res.json();
+
+      if (!data.resultado || data.resultado.trim().length < 5 || data.resultado.includes('Timeout') || data.resultado.includes('inválido')) {
+         throw new Error('Nenhum dado encontrado ou a consulta expirou.');
+      }
+
+      setOutput(data.resultado);
+    } catch (error: any) {
       console.error(error);
       setIsError(true);
-      setOutput("⛔ ACESSO NEGADO: Parâmetros inválidos ou sistema sobrecarregado. Tente novamente.");
+      setOutput(`⛔ ACESSO NEGADO: ${error.message || "Parâmetros inválidos ou tempo esgotado."}`);
     } finally {
       setIsLoading(false);
       setIsTyping(true);
