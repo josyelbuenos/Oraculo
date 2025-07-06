@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import ParticleBackground from '@/components/oraculo/particle-background';
 import { TypingText } from '@/components/oraculo/typing-text';
+import { runConsulta } from '@/ai/flows/consulta-flow';
 
 const modules = [
   { id: 'cpf', icon: <User className="h-5 w-5" />, label: 'CPF' },
@@ -26,26 +27,6 @@ const welcomeMessage = `
 > CONEXÃO ESTABELECIDA.
 > AGUARDANDO SELEÇÃO DE MÓDULO PARA CONSULTA.
 `;
-
-const cleanData = (text: string): string => {
-  const headersToRemove = [
-    '👤 USUÁRIO:',
-    '🤖 BY:',
-    '✅ Canal:',
-    '⚠️ AVISO:',
-    'Consulta realizada com sucesso!',
-    /🔍 MÓDULO: .*/g,
-    /👤 CONSULTA: .*/g,
-    /BY: .*/g,
-    /Canal: .*/g,
-    '--------------------------------------',
-  ];
-  let cleanedText = text;
-  headersToRemove.forEach(header => {
-    cleanedText = cleanedText.replace(header, '');
-  });
-  return cleanedText.replace(/\n{3,}/g, '\n\n').trim();
-};
 
 export default function OraclePage() {
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
@@ -84,23 +65,20 @@ export default function OraclePage() {
     setIsError(false);
 
     try {
-      const response = await fetch(`https://oraculo-api-enso.onrender.com/consulta/${selectedModule}/${inputValue}`);
-      
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      const response = await runConsulta({
+        module: selectedModule,
+        query: inputValue,
+      });
 
-      const textData = await response.text();
-      const cleaned = cleanData(textData);
-
-      if (cleaned.length < 5) {
+      if (!response || !response.result || response.result.trim().length < 5) {
          throw new Error('No data found');
       }
 
-      setOutput(cleaned);
+      setOutput(response.result);
     } catch (error) {
+      console.error(error);
       setIsError(true);
-      setOutput("⛔ ACESSO NEGADO: Parâmetros inválidos ou tempo esgotado.");
+      setOutput("⛔ ACESSO NEGADO: Parâmetros inválidos ou sistema sobrecarregado. Tente novamente.");
     } finally {
       setIsLoading(false);
       setIsTyping(true);
