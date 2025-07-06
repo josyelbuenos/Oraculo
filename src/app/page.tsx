@@ -64,7 +64,6 @@ export default function OraclePage() {
     setIsError(false);
 
     try {
-      // Use the internal API route as a proxy to avoid CORS issues.
       const res = await fetch(`/api/consulta/${selectedModule}/${inputValue}`);
 
       if (!res.ok) {
@@ -73,7 +72,6 @@ export default function OraclePage() {
             const errorJson = await res.json();
             errorDetail = errorJson.detail || `HTTP error! status: ${res.status}`;
         } catch (e) {
-            // If the response is not JSON, use the status text.
             errorDetail = res.statusText || `HTTP error! status: ${res.status}`;
         }
         throw new Error(errorDetail);
@@ -81,17 +79,14 @@ export default function OraclePage() {
 
       const data = await res.json();
       
-      // The external API returns a 'resultado' field. Let's check for common error patterns in it.
       if (!data.resultado || data.resultado.trim().length < 5 || data.resultado.toLowerCase().includes('timeout') || data.resultado.toLowerCase().includes('inválido')) {
          throw new Error('Nenhum dado encontrado ou a consulta expirou.');
       }
 
-      // The external API already cleans the headers, so we can use the result directly.
       setOutput(data.resultado);
     } catch (error: any) {
       console.error(error);
       setIsError(true);
-      // Use a more generic error message for network/proxy failures.
       const errorMessage = error.message.includes('Failed to fetch') 
         ? "Falha na comunicação com o servidor."
         : error.message;
@@ -106,7 +101,7 @@ export default function OraclePage() {
   return (
     <main className="relative min-h-screen w-full bg-background font-code overflow-hidden scanlines">
       <ParticleBackground />
-      <div className="relative z-10 flex h-screen flex-col md:flex-row p-2 sm:p-4 gap-4">
+      <div className="relative z-10 flex flex-col p-2 sm:p-4 gap-4 min-h-[100svh] md:h-screen md:flex-row md:overflow-hidden">
         <nav className="flex flex-row md:flex-col gap-2 p-2 bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg md:w-64 overflow-x-auto md:overflow-y-auto">
           <div className="flex items-center gap-2 p-2 border-b border-primary/20">
             <Cpu className="text-primary text-glow-primary h-6 w-6" />
