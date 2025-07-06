@@ -23,8 +23,10 @@ const modules = [
 const welcomeMessage = `
 🔮 BEM-VINDO AO ORÁCULO.
 > SISTEMA INICIALIZADO.
-> CONECTANDO AOS SERVIDORES QUÂNTICOS...
+> CONECTANDO AO MAINFRAME.
 > CONEXÃO ESTABELECIDA.
+> VERIFICANDO OS MÓDULOS.
+> SISTEMA INICADO!.
 > AGUARDANDO SELEÇÃO DE MÓDULO PARA CONSULTA.
 `;
 
@@ -35,6 +37,7 @@ export default function OraclePage() {
   const [isTyping, setIsTyping] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [fictionalData, setFictionalData] = useState({ crypto: 'A4B8', signal: 98, ping: 12 });
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -42,6 +45,17 @@ export default function OraclePage() {
       inputRef.current?.focus();
     }
   }, [selectedModule]);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFictionalData({
+        crypto: Math.random().toString(16).substr(2, 4).toUpperCase(),
+        signal: Math.floor(Math.random() * (100 - 90 + 1)) + 90,
+        ping: Math.floor(Math.random() * (25 - 8 + 1)) + 8
+      });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleModuleSelect = (moduleId: string) => {
     setSelectedModule(moduleId);
@@ -136,7 +150,7 @@ export default function OraclePage() {
   return (
     <main className="relative min-h-screen w-full bg-background font-code overflow-hidden scanlines">
       <ParticleBackground />
-      <div className="relative z-10 flex flex-col p-2 sm:p-4 gap-4 min-h-[100svh] md:h-screen md:flex-row md:overflow-hidden">
+      <div className="relative z-10 flex flex-col p-2 sm:p-4 gap-4 min-h-[100svh] md:flex-row pb-14">
         <nav className="flex flex-row md:flex-col gap-2 p-2 bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg md:w-64 overflow-x-auto md:overflow-y-auto">
           <div className="flex items-center gap-2 p-2 border-b border-primary/20">
             <Eye className="text-primary text-glow-primary h-6 w-6" />
@@ -194,6 +208,20 @@ export default function OraclePage() {
           )}
         </div>
       </div>
+       <footer className="fixed bottom-0 left-0 right-0 z-20 p-2 bg-background/50 backdrop-blur-sm border-t border-primary/20">
+        <div className="mx-auto flex justify-between items-center text-xs font-code text-muted-foreground px-4">
+          <div className="flex items-center gap-4">
+            <span className="text-primary/80 text-glow-primary">STATUS: CONECTADO</span>
+            <span className="hidden sm:inline text-muted-foreground">|</span>
+            <span className="hidden sm:inline">CRIPTO: {fictionalData.crypto}</span>
+            <span className="hidden md:inline text-muted-foreground">|</span>
+            <span className="hidden md:inline">SINAL: {fictionalData.signal}%</span>
+            <span className="hidden lg:inline text-muted-foreground">|</span>
+            <span className="hidden lg:inline">PING: {fictionalData.ping}ms</span>
+          </div>
+          <div className="text-glow-primary">By: JosyelBuenos</div>
+        </div>
+      </footer>
     </main>
   );
 }
