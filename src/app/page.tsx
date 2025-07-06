@@ -64,7 +64,8 @@ export default function OraclePage() {
     setIsError(false);
 
     try {
-      const res = await fetch(`https://oraculo-api-enso.onrender.com/consulta/${selectedModule}/${inputValue}`);
+      // Use the internal API route as a proxy to avoid CORS issues.
+      const res = await fetch(`/api/consulta/${selectedModule}/${inputValue}`);
 
       if (!res.ok) {
         let errorDetail = "Erro do servidor.";
@@ -72,22 +73,29 @@ export default function OraclePage() {
             const errorJson = await res.json();
             errorDetail = errorJson.detail || `HTTP error! status: ${res.status}`;
         } catch (e) {
-            errorDetail = `HTTP error! status: ${res.status}`;
+            // If the response is not JSON, use the status text.
+            errorDetail = res.statusText || `HTTP error! status: ${res.status}`;
         }
         throw new Error(errorDetail);
       }
 
       const data = await res.json();
-
-      if (!data.resultado || data.resultado.trim().length < 5 || data.resultado.includes('Timeout') || data.resultado.includes('inválido')) {
+      
+      // The external API returns a 'resultado' field. Let's check for common error patterns in it.
+      if (!data.resultado || data.resultado.trim().length < 5 || data.resultado.toLowerCase().includes('timeout') || data.resultado.toLowerCase().includes('inválido')) {
          throw new Error('Nenhum dado encontrado ou a consulta expirou.');
       }
 
+      // The external API already cleans the headers, so we can use the result directly.
       setOutput(data.resultado);
     } catch (error: any) {
       console.error(error);
       setIsError(true);
-      setOutput(`⛔ ACESSO NEGADO: ${error.message || "Parâmetros inválidos ou tempo esgotado."}`);
+      // Use a more generic error message for network/proxy failures.
+      const errorMessage = error.message.includes('Failed to fetch') 
+        ? "Falha na comunicação com o servidor."
+        : error.message;
+      setOutput(`⛔ ACESSO NEGADO: ${errorMessage || "Parâmetros inválidos ou tempo esgotado."}`);
     } finally {
       setIsLoading(false);
       setIsTyping(true);
