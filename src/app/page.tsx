@@ -1,3 +1,174 @@
-export default function Home() {
-  return <></>;
+'use client';
+
+import { useState, useEffect, useRef, FormEvent } from 'react';
+import { User, Phone, Car, Building, Search, Cpu, X, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import ParticleBackground from '@/components/oraculo/particle-background';
+import { TypingText } from '@/components/oraculo/typing-text';
+
+const modules = [
+  { id: 'cpf', icon: <User className="h-5 w-5" />, label: 'CPF' },
+  { id: 'cpf2', icon: <User className="h-5 w-5" />, label: 'CPF v2' },
+  { id: 'cpf3', icon: <User className="h-5 w-5" />, label: 'CPF v3' },
+  { id: 'nome', icon: <User className="h-5 w-5" />, label: 'Nome' },
+  { id: 'telefone', icon: <Phone className="h-5 w-5" />, label: 'Telefone' },
+  { id: 'placa', icon: <Car className="h-5 w-5" />, label: 'Placa' },
+  { id: 'cnpj', icon: <Building className="h-5 w-5" />, label: 'CNPJ' },
+];
+
+const welcomeMessage = `
+🔮 BEM-VINDO AO ORÁCULO.
+> SISTEMA INICIALIZADO.
+> CONECTANDO AOS SERVIDORES QUÂNTICOS...
+> CONEXÃO ESTABELECIDA.
+> AGUARDANDO SELEÇÃO DE MÓDULO PARA CONSULTA.
+`;
+
+const cleanData = (text: string): string => {
+  const headersToRemove = [
+    '👤 USUÁRIO:',
+    '🤖 BY:',
+    '✅ Canal:',
+    '⚠️ AVISO:',
+    'Consulta realizada com sucesso!',
+    /🔍 MÓDULO: .*/g,
+    /👤 CONSULTA: .*/g,
+    /BY: .*/g,
+    /Canal: .*/g,
+    '--------------------------------------',
+  ];
+  let cleanedText = text;
+  headersToRemove.forEach(header => {
+    cleanedText = cleanedText.replace(header, '');
+  });
+  return cleanedText.replace(/\n{3,}/g, '\n\n').trim();
+};
+
+export default function OraclePage() {
+  const [selectedModule, setSelectedModule] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState('');
+  const [output, setOutput] = useState(welcomeMessage);
+  const [isTyping, setIsTyping] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (selectedModule) {
+      inputRef.current?.focus();
+    }
+  }, [selectedModule]);
+
+  const handleModuleSelect = (moduleId: string) => {
+    setSelectedModule(moduleId);
+    setInputValue('');
+    setOutput(`> MÓDULO [${moduleId.toUpperCase()}] SELECIONADO.
+> INSIRA OS DADOS PARA CONSULTA...`);
+    setIsTyping(true);
+    setIsError(false);
+  };
+
+  const handleQuery = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!inputValue || !selectedModule) return;
+
+    setIsLoading(true);
+    setIsTyping(false);
+    setOutput(`> EXECUTANDO CONSULTA...
+> MÓDULO: ${selectedModule.toUpperCase()}
+> VALOR: ${inputValue}
+> AGUARDANDO RESPOSTA DO SERVIDOR...`);
+    setIsError(false);
+
+    try {
+      const response = await fetch(`https://oraculo-api-enso.onrender.com/consulta/${selectedModule}/${inputValue}`);
+      
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const textData = await response.text();
+      const cleaned = cleanData(textData);
+
+      if (cleaned.length < 5) {
+         throw new Error('No data found');
+      }
+
+      setOutput(cleaned);
+    } catch (error) {
+      setIsError(true);
+      setOutput("⛔ ACESSO NEGADO: Parâmetros inválidos ou tempo esgotado.");
+    } finally {
+      setIsLoading(false);
+      setIsTyping(true);
+      setInputValue('');
+    }
+  };
+
+  return (
+    <main className="relative min-h-screen w-full bg-background font-code overflow-hidden scanlines">
+      <ParticleBackground />
+      <div className="relative z-10 flex h-screen flex-col md:flex-row p-2 sm:p-4 gap-4">
+        <nav className="flex flex-row md:flex-col gap-2 p-2 bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg md:w-64 overflow-x-auto md:overflow-y-auto">
+          <div className="flex items-center gap-2 p-2 border-b border-primary/20">
+            <Cpu className="text-primary text-glow-primary h-6 w-6" />
+            <h1 className="text-lg font-bold text-primary text-glow-primary">ORÁCULO</h1>
+          </div>
+          <div className="flex flex-row md:flex-col gap-2 p-2">
+            {modules.map((mod) => (
+              <Button
+                key={mod.id}
+                variant="ghost"
+                onClick={() => handleModuleSelect(mod.id)}
+                className={cn(
+                  'justify-start gap-3 transition-all duration-300 hover:bg-primary/20 hover:text-primary hover:text-glow-primary',
+                  selectedModule === mod.id && 'bg-primary/20 text-primary font-bold text-glow-primary'
+                )}
+              >
+                {mod.icon}
+                <span>{mod.label}</span>
+              </Button>
+            ))}
+          </div>
+        </nav>
+
+        <div className="flex-1 flex flex-col gap-4 min-h-0">
+          <Card className="flex-1 flex flex-col bg-black/30 backdrop-blur-sm border-primary/20 overflow-hidden">
+            <CardContent className="p-4 flex-1 overflow-y-auto">
+              {isTyping ? (
+                 <TypingText text={output} isError={isError} onComplete={() => setIsTyping(false)} />
+              ) : (
+                <pre className={cn("whitespace-pre-wrap font-code text-sm", isError ? "text-destructive text-glow-error" : "text-accent text-glow-accent")}>
+                  {output}
+                </pre>
+              )}
+            </CardContent>
+          </Card>
+
+          {selectedModule && (
+            <form onSubmit={handleQuery} className="flex items-center gap-2 p-2 bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg">
+              <span className="text-primary text-glow-primary pl-2">$</span>
+              <Input
+                ref={inputRef}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder={`Inserir ${selectedModule.toUpperCase()}...`}
+                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-accent text-lg terminal-input"
+                disabled={isLoading}
+              />
+              <Button type="submit" variant="ghost" size="icon" disabled={isLoading || !inputValue.trim()}>
+                {isLoading ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <Search className="h-5 w-5 text-primary hover:text-glow-primary" />}
+              </Button>
+              <Button type="button" variant="ghost" size="icon" onClick={() => setSelectedModule(null)}>
+                <X className="h-5 w-5 text-muted-foreground hover:text-destructive" />
+              </Button>
+            </form>
+          )}
+        </div>
+      </div>
+    </main>
+  );
 }
