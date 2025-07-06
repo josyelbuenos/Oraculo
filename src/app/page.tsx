@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import ParticleBackground from '@/components/oraculo/particle-background';
 import { TypingText } from '@/components/oraculo/typing-text';
+import { analisarConsulta } from '@/ai/flows/analise-consulta-flow';
 
 const modules = [
   { id: 'cpf', icon: <User className="h-5 w-5" />, label: 'CPF' },
@@ -106,7 +107,18 @@ export default function OraclePage() {
          throw new Error('Nenhum dado encontrado ou a consulta expirou.');
       }
 
-      setOutput(cleanedData);
+      setOutput(`> DADOS RECEBIDOS.
+> INICIANDO ANÁLISE PROFUNDA COM IA...
+> CONECTANDO AO NÚCLEO DO ORÁCULO...`);
+
+      const analysisResult = await analisarConsulta({ rawData: cleanedData });
+
+      if (!analysisResult || !analysisResult.analysis) {
+        throw new Error('A análise da IA falhou em retornar um resultado.');
+      }
+
+      setOutput(analysisResult.analysis);
+
     } catch (error: any) {
       console.error(error);
       setIsError(true);
