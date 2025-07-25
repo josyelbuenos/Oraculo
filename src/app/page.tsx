@@ -122,6 +122,9 @@ export default function OraclePage() {
       });
 
       if (!res.ok) {
+        if (res.status === 504) {
+             throw new Error("A API está demorando muito para responder, pode estar sendo reiniciada. Por favor, tente novamente em alguns minutos.");
+        }
         let errorDetail = "Erro do servidor.";
         try {
             const errorJson = await res.json();
