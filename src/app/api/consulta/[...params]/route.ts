@@ -7,7 +7,7 @@ export async function POST(
   request: Request,
   { params }: { params: { params: string[] } }
 ) {
-  // The [...params] still captures the module from the URL
+  // The [...params] captures the module from the URL
   // e.g., /api/consulta/cpf -> params.params will be ['cpf']
   const [module] = params.params;
 
