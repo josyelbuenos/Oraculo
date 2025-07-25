@@ -92,7 +92,13 @@ export default function OraclePage() {
     setIsError(false);
 
     try {
-      const res = await fetch(`/api/consulta/${selectedModule}/${inputValue}`);
+      const res = await fetch(`/api/consulta/${selectedModule}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ valor: inputValue }),
+      });
 
       if (!res.ok) {
         let errorDetail = "Erro do servidor.";

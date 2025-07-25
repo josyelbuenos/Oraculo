@@ -2,31 +2,64 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(
-  _request: Request,
+// This function now handles POST requests
+export async function POST(
+  request: Request,
   { params }: { params: { params: string[] } }
 ) {
-  // The [...params] route segment captures all parts of the path after /api/consulta/
-  // For a URL like /api/consulta/cpf/12345, params.params will be ['cpf', '12345']
-  const [module, value] = params.params;
+  // The [...params] still captures the module from the URL
+  // e.g., /api/consulta/cpf -> params.params will be ['cpf']
+  const [module] = params.params;
 
-  if (!module || !value) {
+  if (!module) {
     return NextResponse.json(
-      { detail: 'Módulo ou valor ausente na requisição.' },
+      { detail: 'Módulo ausente na requisição.' },
       { status: 400 }
     );
   }
 
-  const externalApiUrl = `https://oraculo-api-enso.onrender.com/consulta/${module}/${value}`;
+  let value: string;
+  try {
+    const body = await request.json();
+    value = body.valor;
+    if (!value) throw new Error("Missing value");
+  } catch (error) {
+    return NextResponse.json(
+      { detail: 'Corpo da requisição inválido ou valor ausente.' },
+      { status: 400 }
+    );
+  }
+
+  const externalApiUrl = `https://oraculo-api-enso.onrender.com/consulta/${module}`;
+
+  // Get credentials from environment variables
+  const apiUser = process.env.API_USER;
+  const apiPassword = process.env.API_PASSWORD;
+
+  if (!apiUser || !apiPassword) {
+    console.error("Credenciais da API não configuradas no ambiente.");
+    return NextResponse.json(
+        { detail: 'Erro interno do servidor: credenciais não configuradas.' },
+        { status: 500 }
+    );
+  }
+
+  const requestBody = {
+    usuario: apiUser,
+    senha: apiPassword,
+    valor: value,
+  };
 
   try {
-    // We use a timeout to prevent the serverless function from hanging for too long
-    // if the external API is unresponsive. 65s is a bit more than the API's own timeout.
     const apiRes = await fetch(externalApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
       signal: AbortSignal.timeout(65000), 
     });
 
-    // If the external API returns an error status, we forward it
     if (!apiRes.ok) {
       const errorData = await apiRes.json().catch(() => ({ 
         detail: `A API externa respondeu com o status: ${apiRes.status}`
@@ -38,7 +71,6 @@ export async function GET(
     return NextResponse.json(data);
 
   } catch (error: any) {
-    // This catches network errors, DNS issues, or the timeout from AbortSignal
     if (error.name === 'AbortError') {
         return NextResponse.json({ detail: 'A API externa demorou muito para responder (timeout).' }, { status: 504 });
     }
@@ -46,7 +78,7 @@ export async function GET(
     console.error('Erro no proxy da API:', error);
     return NextResponse.json(
       { detail: 'Erro de comunicação ao contatar a API externa.' },
-      { status: 502 } // 502 Bad Gateway is appropriate here
+      { status: 502 }
     );
   }
 }
