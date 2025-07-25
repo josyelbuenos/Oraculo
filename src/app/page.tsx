@@ -40,6 +40,7 @@ export default function OraclePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [fictionalData, setFictionalData] = useState({ crypto: 'A4B8', signal: 98, ping: 12 });
+  const [userName, setUserName] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onTypingComplete = useCallback(() => {
@@ -50,6 +51,20 @@ export default function OraclePage() {
     const timer = setTimeout(() => {
       setIsAppLoading(false);
     }, 4000);
+
+    const fetchUserName = async () => {
+      try {
+        const res = await fetch('/api/user');
+        const data = await res.json();
+        if(res.ok) {
+          setUserName(data.username);
+        }
+      } catch (error) {
+        console.error("Failed to fetch username", error);
+      }
+    };
+    fetchUserName();
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -144,7 +159,7 @@ export default function OraclePage() {
 > INICIANDO ANÁLISE PROFUNDA COM IA...
 > CONECTANDO AO NÚCLEO DO ORÁCULO...`);
 
-      const analysisResult = await analisarConsulta({ rawData: cleanedData });
+      const analysisResult = await analisarConsulta({ rawData: cleanedData, userName: userName || 'Operador' });
 
       if (!analysisResult || !analysisResult.analysis) {
         throw new Error('A análise da IA falhou em retornar um resultado.');
@@ -242,7 +257,7 @@ export default function OraclePage() {
             <span className="hidden lg:inline text-muted-foreground">|</span>
             <span className="hidden lg:inline">PING: {fictionalData.ping}ms</span>
           </div>
-          <div className="text-glow-primary">By: JosyelBuenos</div>
+          <div className="text-glow-primary">By: {userName || "JosyelBuenos"}</div>
         </div>
       </footer>
     </main>
