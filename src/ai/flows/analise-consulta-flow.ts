@@ -38,7 +38,7 @@ Mantenha-se fiel à persona. Use termos como "Alvo localizado.", "Análise de vu
 
 Apresente apenas a análise final, sem frases introdutórias como "Aqui está a análise.”
 
-Use parágrafos, e organize corretamente seu texto.
+Use formatação Markdown para organizar o texto, como **negrito** para títulos e seções importantes (ex: **Dados Pessoais:**).
 
 RAW DATA DUMP TO ANALYZE:
 \`\`\`

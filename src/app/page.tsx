@@ -11,6 +11,7 @@ import { TypingText } from '@/components/oraculo/typing-text';
 import { analisarConsulta } from '@/ai/flows/analise-consulta-flow';
 import { LoadingScreen } from '@/components/oraculo/loading-screen';
 import { OrwellianEye } from '@/components/oraculo/orwellian-eye';
+import ReactMarkdown from 'react-markdown';
 
 const modules = [
   { id: 'cpf', icon: <User className="h-5 w-5" />, label: 'CPF' },
@@ -230,9 +231,15 @@ export default function OraclePage() {
               ) : isTyping ? (
                  <TypingText text={output} isError={isError} onComplete={onTypingComplete} />
               ) : (
-                <pre className={cn("whitespace-pre-wrap font-code text-sm", isError ? "text-destructive text-glow-error" : "text-accent text-glow-accent")}>
-                  {output}
-                </pre>
+                <div className={cn("prose prose-sm prose-invert font-code text-sm", isError ? "prose-p:text-destructive text-glow-error" : "prose-p:text-accent text-glow-accent")}>
+                   <ReactMarkdown
+                      components={{
+                        p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                      }}
+                   >
+                      {output}
+                    </ReactMarkdown>
+                </div>
               )}
             </CardContent>
           </Card>

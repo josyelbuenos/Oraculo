@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import ReactMarkdown from 'react-markdown';
 
 interface TypingTextProps {
   text: string;
@@ -21,7 +22,7 @@ export function TypingText({ text, className, isError = false, onComplete, speed
     let i = 0;
     const typingInterval = setInterval(() => {
       if (i < text.length) {
-        setDisplayedText(prev => prev + text[i]);
+        setDisplayedText(text.substring(0, i + 1));
         i++;
       } else {
         clearInterval(typingInterval);
@@ -35,12 +36,18 @@ export function TypingText({ text, className, isError = false, onComplete, speed
     return () => clearInterval(typingInterval);
   }, [text, onComplete, speed]);
 
-  const textColorClass = isError ? "text-destructive text-glow-error" : "text-accent text-glow-accent";
+  const textColorClass = isError ? "prose-p:text-destructive text-glow-error" : "prose-p:text-accent text-glow-accent";
 
   return (
-    <pre className={cn("whitespace-pre-wrap font-code text-sm", textColorClass, className)}>
-      {displayedText}
+    <div className={cn("prose prose-sm prose-invert font-code", textColorClass, className)}>
+       <ReactMarkdown
+          components={{
+            p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+          }}
+       >
+          {displayedText}
+        </ReactMarkdown>
       {!isComplete && <span className={cn("inline-block w-2 h-4 ml-1 animate-pulse", isError ? "bg-destructive" : "bg-accent")} aria-hidden="true" />}
-    </pre>
+    </div>
   );
 }
