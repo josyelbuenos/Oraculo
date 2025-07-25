@@ -21,13 +21,13 @@ const modules = [
   { id: 'cnpj', icon: <Building className="h-5 w-5" />, label: 'CNPJ' },
 ];
 
-const welcomeMessage = `
-🔮 BEM-VINDO AO ORÁCULO.
+const generateWelcomeMessage = (userName: string) => `
+🔮 BEM-VINDO AO ORÁCULO, ${userName ? userName.toUpperCase() : 'OPERADOR'}.
 > SISTEMA INICIALIZADO.
 > CONECTANDO AO MAINFRAME.
 > CONEXÃO ESTABELECIDA.
 > VERIFICANDO OS MÓDULOS.
-> SISTEMA INICADO!.
+> SISTEMA INICIADO!
 > AGUARDANDO SELEÇÃO DE MÓDULO PARA CONSULTA.
 `;
 
@@ -35,7 +35,7 @@ export default function OraclePage() {
   const [isAppLoading, setIsAppLoading] = useState(true);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState('');
-  const [output, setOutput] = useState(welcomeMessage);
+  const [output, setOutput] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -58,9 +58,13 @@ export default function OraclePage() {
         const data = await res.json();
         if(res.ok) {
           setUserName(data.username);
+          setOutput(generateWelcomeMessage(data.username));
+        } else {
+          setOutput(generateWelcomeMessage(''));
         }
       } catch (error) {
         console.error("Failed to fetch username", error);
+        setOutput(generateWelcomeMessage(''));
       }
     };
     fetchUserName();
@@ -249,7 +253,7 @@ export default function OraclePage() {
        <footer className="fixed bottom-0 left-0 right-0 z-20 p-2 bg-background/50 backdrop-blur-sm border-t border-primary/20">
         <div className="mx-auto flex justify-between items-center text-xs font-code text-muted-foreground px-4">
           <div className="flex items-center gap-4">
-            <span className="text-primary/80 text-glow-primary">STATUS: CONECTADO</span>
+            <span className="text-primary/80 text-glow-primary">STATUS: CONECTADO | OPERADOR: {userName || "..."}</span>
             <span className="hidden sm:inline text-muted-foreground">|</span>
             <span className="hidden sm:inline">CRIPTO: {fictionalData.crypto}</span>
             <span className="hidden md:inline text-muted-foreground">|</span>
@@ -257,7 +261,7 @@ export default function OraclePage() {
             <span className="hidden lg:inline text-muted-foreground">|</span>
             <span className="hidden lg:inline">PING: {fictionalData.ping}ms</span>
           </div>
-          <div className="text-glow-primary">By: {userName || "JosyelBuenos"}</div>
+          <div className="text-glow-primary">By: JosyelBuenos</div>
         </div>
       </footer>
     </main>
