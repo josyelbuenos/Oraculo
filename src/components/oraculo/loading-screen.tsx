@@ -12,14 +12,13 @@ const loadingSteps = [
   { text: 'CARREGANDO INTERFACE DE DADOS...', duration: 300 },
 ];
 
-const GlitchText = ({ text }: { text: string }) => (
-    <div className="relative text-primary text-glow-primary font-bold text-4xl md:text-6xl tracking-widest" data-text={text}>
-      {text}
-      <div className="glitch-layer a" data-text={text}></div>
-      <div className="glitch-layer b" data-text={text}></div>
-      <div className="glitch-layer c" data-text={text}></div>
+const OrwellianEye = () => (
+    <div className="loading-eye">
+      <div className="loading-eye-pupil"></div>
+      <div className="loading-eyelid"></div>
     </div>
-  );
+);
+
 
 export function LoadingScreen() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -56,7 +55,9 @@ export function LoadingScreen() {
   return (
     <div className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center font-code text-accent scanlines noise">
       <div className="flex flex-col items-center justify-center text-center p-4">
-        <GlitchText text="ORÁCULO" />
+        <div className="mb-12">
+            <OrwellianEye />
+        </div>
         <div className="w-full max-w-md mt-8">
           <div className="h-2 w-full bg-primary/10 border border-primary/30 rounded-full overflow-hidden">
             <div
@@ -72,3 +73,5 @@ export function LoadingScreen() {
     </div>
   );
 }
+
+    
