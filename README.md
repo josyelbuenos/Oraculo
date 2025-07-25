@@ -97,9 +97,11 @@ A aplicação estará disponível em `http://localhost:9002`.
 └── package.json            # Dependências e scripts do projeto
 ```
 
-## ⚖️ Licença
+## ⚖️ Licença e Termos de Uso
 
 Este projeto é distribuído sob a licença MIT. Veja o arquivo [LICENSE.md](LICENSE.md) para mais detalhes.
+
+Ao utilizar este software, você concorda com nossos [Termos de Uso e Política de Privacidade](TERMS_OF_USE.md).
 
 ---
 _Criado com dedicação por JosyelBuenos._
