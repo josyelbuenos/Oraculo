@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { OrwellianEye } from './orwellian-eye';
 
 const loadingSteps = [
   { text: 'INICIANDO SEQUÊNCIA DE BOOT...', duration: 500 },
@@ -11,14 +12,6 @@ const loadingSteps = [
   { text: 'CALIBRANDO NÚCLEO DE IA ORÁCULO...', duration: 900 },
   { text: 'CARREGANDO INTERFACE DE DADOS...', duration: 300 },
 ];
-
-const OrwellianEye = () => (
-    <div className="loading-eye">
-      <div className="loading-eye-pupil"></div>
-      <div className="loading-eyelid"></div>
-    </div>
-);
-
 
 export function LoadingScreen() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -73,5 +66,3 @@ export function LoadingScreen() {
     </div>
   );
 }
-
-    

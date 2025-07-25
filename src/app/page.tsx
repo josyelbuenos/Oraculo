@@ -10,6 +10,7 @@ import ParticleBackground from '@/components/oraculo/particle-background';
 import { TypingText } from '@/components/oraculo/typing-text';
 import { analisarConsulta } from '@/ai/flows/analise-consulta-flow';
 import { LoadingScreen } from '@/components/oraculo/loading-screen';
+import { OrwellianEye } from '@/components/oraculo/orwellian-eye';
 
 const modules = [
   { id: 'cpf', icon: <User className="h-5 w-5" />, label: 'CPF' },
@@ -218,8 +219,15 @@ export default function OraclePage() {
 
         <div className="flex-1 flex flex-col gap-4 min-h-0">
           <Card className="flex-1 flex flex-col bg-black/30 backdrop-blur-sm border-primary/20 overflow-hidden">
-            <CardContent className="p-4 flex-1 overflow-y-auto">
-              {isTyping ? (
+            <CardContent className="p-4 flex-1 overflow-y-auto flex flex-col">
+              {isLoading ? (
+                <div className='flex flex-col items-center justify-center text-center flex-1'>
+                    <pre className="whitespace-pre-wrap font-code text-sm text-accent text-glow-accent mb-8">
+                      {output}
+                    </pre>
+                    <OrwellianEye />
+                </div>
+              ) : isTyping ? (
                  <TypingText text={output} isError={isError} onComplete={onTypingComplete} />
               ) : (
                 <pre className={cn("whitespace-pre-wrap font-code text-sm", isError ? "text-destructive text-glow-error" : "text-accent text-glow-accent")}>
