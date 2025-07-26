@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, FormEvent, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { User, Phone, Car, Building, Search, Eye, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,6 +36,7 @@ const generateWelcomeMessage = (userName: string) => `
 
 export default function OraclePage() {
   const [isAppLoading, setIsAppLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState('');
   const [output, setOutput] = useState('');
@@ -44,11 +46,22 @@ export default function OraclePage() {
   const [fictionalData, setFictionalData] = useState({ crypto: 'A4B8', signal: 98, ping: 12 });
   const [userName, setUserName] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const onTypingComplete = useCallback(() => {
     setIsTyping(false);
   }, []);
 
+  useEffect(() => {
+    // Check for a session token or similar to determine if authenticated
+    const session = sessionStorage.getItem('oraculo-auth');
+    if (!session) {
+      router.push('/login');
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsAppLoading(false);
@@ -69,10 +82,12 @@ export default function OraclePage() {
         setOutput(generateWelcomeMessage(''));
       }
     };
-    fetchUserName();
+    if (isAuthenticated) {
+        fetchUserName();
+    }
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (selectedModule) {
@@ -190,6 +205,10 @@ export default function OraclePage() {
     }
   };
 
+  if (!isAuthenticated) {
+    return <LoadingScreen />;
+  }
+  
   if (isAppLoading) {
     return <LoadingScreen />;
   }
