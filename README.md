@@ -11,6 +11,7 @@ O sistema integra-se a uma API externa para realizar consultas e emprega Intelig
 - **Análise com Inteligência Artificial:** Utiliza o Google Gemini através do Genkit para interpretar os dados brutos e gerar uma análise detalhada e estilizada, como se fosse uma IA de hacking.
 - **Proxy de API Seguro:** As chamadas para a API externa são feitas através de um proxy no backend para proteger as credenciais e contornar restrições de CORS.
 - **Estilo Cyberpunk:** Paleta de cores neon, fontes monoespaçadas e efeitos visuais como "scanlines" e "noise" para reforçar a atmosfera futurista.
+- **Suporte a Progressive Web App (PWA):** A aplicação pode ser "instalada" em dispositivos móveis e desktops para uma experiência mais próxima a de um aplicativo nativo.
 - **Design Responsivo:** A interface se adapta a diferentes tamanhos de tela, de desktops a dispositivos móveis.
 
 ## 🚀 Tecnologias Utilizadas
@@ -26,6 +27,8 @@ O sistema integra-se a uma API externa para realizar consultas e emprega Intelig
 - **Inteligência Artificial:**
   - [Genkit](https://firebase.google.com/docs/genkit)
   - [Google Gemini](https://ai.google.dev/)
+- **PWA:**
+  - [@ducanh2912/next-pwa](https://www.npmjs.com/package/@ducanh2912/next-pwa)
 - **Deployment:**
   - Preparado para deploy na [Firebase App Hosting](https://firebase.google.com/docs/hosting) ou outras plataformas que suportam Next.js.
 
