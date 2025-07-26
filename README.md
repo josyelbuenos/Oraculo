@@ -11,7 +11,6 @@ O sistema integra-se a uma API externa para realizar consultas e emprega Intelig
 - **Análise com Inteligência Artificial:** Utiliza o Google Gemini através do Genkit para interpretar os dados brutos e gerar uma análise detalhada e estilizada, como se fosse uma IA de hacking.
 - **Proxy de API Seguro:** As chamadas para a API externa são feitas através de um proxy no backend para proteger as credenciais e contornar restrições de CORS.
 - **Estilo Cyberpunk:** Paleta de cores neon, fontes monoespaçadas e efeitos visuais como "scanlines" e "noise" para reforçar a atmosfera futurista.
-- **Suporte a Progressive Web App (PWA):** A aplicação pode ser "instalada" em dispositivos móveis e desktops para uma experiência mais próxima a de um aplicativo nativo, com suporte a funcionamento offline.
 - **Design Responsivo:** A interface se adapta a diferentes tamanhos de tela, de desktops a dispositivos móveis.
 
 ## 🚀 Tecnologias Utilizadas

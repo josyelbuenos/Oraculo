@@ -5,7 +5,6 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Oráculo: Cyber Data Scanner",
   description: "Painel hacker de rastreio e consulta de dados confidenciais.",
-  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({
