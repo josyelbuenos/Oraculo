@@ -48,7 +48,7 @@ export default function LoginPage() {
           <div className="input-container">
               <div className="input-content">
                   <div className="input-dist">
-                  <span id="SubscribeTXT">Acessar</span>
+                  <span id="SubscribeTXT">Acessar painel Oráculo</span>
                       <div className="input-type">
                           <input 
                             placeholder="Usuário" 
@@ -71,7 +71,7 @@ export default function LoginPage() {
                       </div>
                       {error && <p className="text-destructive text-sm mt-2 text-glow-error">{error}</p>}
                       <button className="login-button" type="submit" disabled={isLoading}>
-                        {isLoading ? 'Conectando...' : 'Entrar'}
+                        {isLoading ? 'Conectando...' : 'Login'}
                       </button>
                   </div>
               </div>
