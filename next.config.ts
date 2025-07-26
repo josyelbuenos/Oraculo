@@ -18,6 +18,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        '@opentelemetry/exporter-jaeger': false,
+        '@genkit-ai/firebase': false,
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
