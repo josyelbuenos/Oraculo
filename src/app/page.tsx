@@ -53,41 +53,29 @@ export default function OraclePage() {
   }, []);
 
   useEffect(() => {
-    // Check for a session token or similar to determine if authenticated
-    const session = sessionStorage.getItem('oraculo-auth');
-    if (!session) {
+    const sessionUser = sessionStorage.getItem('oraculo-auth-user');
+    if (!sessionUser) {
       router.push('/login');
     } else {
+      setUserName(sessionUser);
       setIsAuthenticated(true);
+      setOutput(generateWelcomeMessage(sessionUser));
     }
   }, [router]);
   
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAppLoading(false);
-    }, 4000);
-
-    const fetchUserName = async () => {
-      try {
-        const res = await fetch('/api/user');
-        const data = await res.json();
-        if(res.ok) {
-          setUserName(data.username);
-          setOutput(generateWelcomeMessage(data.username));
-        } else {
-          setOutput(generateWelcomeMessage(''));
-        }
-      } catch (error) {
-        console.error("Failed to fetch username", error);
-        setOutput(generateWelcomeMessage(''));
-      }
-    };
+    // Only show loading screen if user is authenticated but still loading assets
     if (isAuthenticated) {
-        fetchUserName();
+      const timer = setTimeout(() => {
+        setIsAppLoading(false);
+      }, 2000); // Shorter duration after authentication is confirmed
+      return () => clearTimeout(timer);
+    } else {
+        // If not authenticated, we're likely being redirected, so no need for this loading screen.
+        setIsAppLoading(false); 
     }
-
-    return () => clearTimeout(timer);
   }, [isAuthenticated]);
+
 
   useEffect(() => {
     if (selectedModule) {
@@ -133,7 +121,7 @@ export default function OraclePage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ valor: inputValue }),
+        body: JSON.stringify({ valor: inputValue, usuario: userName }),
       });
 
       if (!res.ok) {
