@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Battery, BatteryCharging, Wifi, WifiOff } from 'lucide-react';
+import { Battery, BatteryCharging, BatteryFull, BatteryLow, BatteryMedium, BatteryWarning, Wifi, WifiOff } from 'lucide-react';
 import './taskbar.css';
 
 interface TaskbarProps {
@@ -34,10 +34,27 @@ export const Taskbar: React.FC<TaskbarProps> = ({ userName }) => {
   const getBatteryColor = (level: number, charging: boolean) => {
     if (charging) return 'text-sky-400';
     if (level > 75) return 'text-green-500';
-    if (level > 50) return 'text-yellow-500';
-    if (level > 25) return 'text-orange-500';
+    if (level > 35) return 'text-yellow-500';
+    if (level > 15) return 'text-orange-500';
     return 'text-red-500';
   };
+  
+  const getBatteryIcon = (level: number, charging: boolean) => {
+      if (charging) {
+        return <BatteryCharging size={20} className="charging-animation" />;
+      }
+      if (level > 75) {
+        return <BatteryFull size={20} />;
+      }
+      if (level > 35) {
+        return <BatteryMedium size={20} />;
+      }
+      if (level > 15) {
+        return <BatteryLow size={20} />;
+      }
+      return <BatteryWarning size={20} />;
+  }
+
 
   // Function to get ping color based on latency
   const getPingColor = (latency: number) => {
@@ -107,8 +124,6 @@ export const Taskbar: React.FC<TaskbarProps> = ({ userName }) => {
     };
   }, []);
 
-  const BatteryIcon = isCharging ? BatteryCharging : Battery;
-
   return (
     <header className="fixed top-0 left-0 right-0 z-20 h-[36px] bg-black/50 backdrop-blur-md border-b border-primary/20 flex items-center justify-between px-4 font-code text-sm">
       <div className="text-left text-primary text-glow-primary">
@@ -124,7 +139,7 @@ export const Taskbar: React.FC<TaskbarProps> = ({ userName }) => {
          </div>
          <div className={cn("flex items-center gap-1", getBatteryColor(batteryLevel, isCharging))}>
             <div className="battery-icon">
-                <BatteryIcon size={20} className={cn(isCharging && "charging-animation")} />
+                {getBatteryIcon(batteryLevel, isCharging)}
             </div>
             <span>{batteryLevel}%</span>
          </div>
