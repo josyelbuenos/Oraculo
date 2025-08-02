@@ -52,7 +52,7 @@ REGRAS DE CONDUTA:
 
 CONTEXTO DA CONVERSA:
 {{#each history}}
-  **{{#if (eq role 'user')}}Operador{{else}}Oráculo{{/if}}:** {{text}}
+**{{#if (/(user)/.test(role))}}Operador{{else}}Oráculo{{/if}}:** {{text}}
 {{/each}}
 
 INPUT ATUAL DO OPERADOR:
