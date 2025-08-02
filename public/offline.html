@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - Conexão Perdida</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1a0026, #30003a);
+      color: #e0b3ff;
+      font-family: 'Orbitron', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(60, 0, 90, 0.3);
+      border: 2px solid #8a2be2;
+      border-radius: 20px;
+      box-shadow: 0 0 30px #d580ff;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #d580ff;
+      text-shadow: 0 0 10px #d580ff, 0 0 20px #8a2be2;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin: 1rem 0 2rem;
+      color: #f2d9ff;
+    }
+
+    .retry-btn {
+      background-color: #a64dff;
+      color: #fff;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 15px #c266ff;
+    }
+
+    .retry-btn:hover {
+      background-color: #b366ff;
+      box-shadow: 0 0 25px #d580ff;
+    }
+
+    .glitch {
+      color: #ffccff;
+      position: relative;
+      display: inline-block;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      color: #d580ff;
+      z-index: -1;
+    }
+
+    .glitch::before {
+      animation: glitchTop 2s infinite linear;
+    }
+
+    .glitch::after {
+      animation: glitchBottom 2s infinite linear;
+      color: #8a2be2;
+    }
+
+    @keyframes glitchTop {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, -2px); }
+      40% { transform: translate(-2px, 2px); }
+      60% { transform: translate(2px, -2px); }
+      80% { transform: translate(2px, 2px); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes glitchBottom {
+      0% { transform: translate(0); }
+      20% { transform: translate(2px, 2px); }
+      40% { transform: translate(2px, -2px); }
+      60% { transform: translate(-2px, 2px); }
+      80% { transform: translate(-2px, -2px); }
+      100% { transform: translate(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="glitch" data-text="Conexão Perdida">Conexão Perdida</h1>
+    <p>Você está offline. Verifique sua conexão com a internet e tente novamente.</p>
+    <button class="retry-btn" onclick="window.location.href='/'">Tentar Novamente</button>
+  </div>
+</body>
+</html>
