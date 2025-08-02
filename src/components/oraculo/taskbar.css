@@ -1,0 +1,16 @@
+
+@keyframes charge-animation {
+  0% {
+    fill: hsl(190, 80%, 50%);
+  }
+  50% {
+    fill: hsl(190, 100%, 80%);
+  }
+  100% {
+    fill: hsl(190, 80%, 50%);
+  }
+}
+
+.charging-animation {
+  animation: charge-animation 2s infinite;
+}
