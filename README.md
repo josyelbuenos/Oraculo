@@ -1,4 +1,5 @@
 
+<img width="1024" height="1024" alt="Oraculo" src="https://github.com/user-attachments/assets/44a5d65e-161a-4ad8-8f2d-5d2e6da9d2e0" />
 # Oráculo: Cyber Data Scanner
 
 Oráculo é uma aplicação web imersiva com tema cyberpunk, projetada para simular um terminal de busca e análise de dados avançado. A interface utiliza uma estética hacker, com efeitos visuais e animações, para criar uma experiência de usuário envolvente e centralizar diversas ferramentas de consulta e comunicação.
