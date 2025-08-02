@@ -24,6 +24,7 @@ import { ModuleSelectionGrid } from '@/components/oraculo/module-selection-grid'
 import { type QueryModule, type ModuleGroup, moduleGroups } from '@/lib/modules';
 import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Taskbar } from '@/components/oraculo/taskbar';
 
 
 // Definição da estrutura de uma mensagem
@@ -105,7 +106,6 @@ export default function OraclePage() {
   const [isTyping, setIsTyping] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [fictionalData, setFictionalData] = useState({ crypto: 'A4B8', signal: 98, ping: 12 });
   const [userName, setUserName] = useState('');
   const [sessionId, setSessionId] = useState('');
   
@@ -161,17 +161,6 @@ export default function OraclePage() {
       }
     }
   }, [selectedTool, selectedQueryModule]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFictionalData({
-        crypto: Math.random().toString(16).substr(2, 4).toUpperCase(),
-        signal: Math.floor(Math.random() * (100 - 90 + 1)) + 90,
-        ping: Math.floor(Math.random() * (25 - 8 + 1)) + 8
-      });
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Listener for Chat Messages
   useEffect(() => {
@@ -744,7 +733,8 @@ export default function OraclePage() {
   return (
     <main className="relative min-h-screen w-full bg-background font-code overflow-hidden scanlines">
       {!isMobile && <ParticleBackground />}
-      <div className="relative z-10 flex flex-col md:flex-row p-2 sm:p-4 gap-4 h-screen">
+      <Taskbar userName={userName} />
+      <div className="relative z-10 flex flex-col md:flex-row p-2 sm:p-4 gap-4 h-screen pt-[44px]">
          <TooltipProvider delayDuration={100}>
           <nav className="hidden md:flex md:flex-col gap-2 p-2 bg-black/30 backdrop-blur-sm border border-primary/20 rounded-lg md:w-72 overflow-y-auto shrink-0">
             <div className="flex items-center gap-3 p-2 border-b border-primary/20 shrink-0">
@@ -801,7 +791,7 @@ export default function OraclePage() {
           </nav>
         </TooltipProvider>
 
-        <div className="flex-1 flex flex-col gap-4 min-h-0 pb-[52px] md:pb-0">
+        <div className="flex-1 flex flex-col gap-4 min-h-0">
           <Card className="flex-1 flex flex-col bg-black/30 backdrop-blur-sm border-primary/20 overflow-hidden">
              <CardContent className="p-4 flex-1 overflow-y-auto flex flex-col justify-center">
               {isMobile && !selectedTool && (
@@ -819,28 +809,6 @@ export default function OraclePage() {
           </div>
         </div>
       </div>
-       <footer className="fixed bottom-0 left-0 right-0 z-20 p-2 bg-background/50 backdrop-blur-sm border-t border-primary/20 h-[52px]">
-        <div className="mx-auto flex justify-between items-center text-xs font-code text-muted-foreground px-4 h-full">
-          <div className="flex items-center gap-4">
-             {isMobile && selectedTool ? (
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => resetState()}>
-                  <Home className="h-4 w-4 text-primary"/>
-                </Button>
-             ) : (
-               <span className="text-primary/80 text-glow-primary">STATUS: CONECTADO | OPERADOR: {userName || "..."}</span>
-             )}
-            <span className="hidden sm:inline text-muted-foreground">|</span>
-            <span className="hidden sm:inline">CRIPTO: {fictionalData.crypto}</span>
-            <span className="hidden md:inline text-muted-foreground">|</span>
-            <span className="hidden md:inline">SINAL: {fictionalData.signal}%</span>
-            <span className="hidden lg:inline text-muted-foreground">|</span>
-            <span className="hidden lg:inline">PING: {fictionalData.ping}ms</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-glow-primary hidden sm:block">By: JosyelBuenos</div>
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }
